@@ -166,7 +166,6 @@ const HomeScreen = ({ navigation }) => {
           onChangeText={(text) => setPassword(text)}
         />
         <Button title="Register" onPress={navigate()} />
-        <Button title="CHEck" onPress={just()} />
 
         <TouchableOpacity onPress={handleLoginPress}>
           <View
@@ -191,45 +190,48 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const HomeScreenan = ({ navigation }) => {
-  const [emails, setEmails] = useState("");
-  const [passwords, setPasswords] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [headings, setHeadings] = useState();
+  const [headings, setHeadings] = useState([]);
+  const [texts, setTexts] = useState([]);
 
+  const getData2 = async (email, password) => {
+    console.log(email, password);
+    var a = 1234;
+    var b = 123;
+    try {
+      await AsyncStorage.setItem("my", password);
+      await AsyncStorage.setItem("email", email);
+      const value = await AsyncStorage.getItem("my");
+      console.log(value);
+
+      if (value == null) {
+        Alert.alert("alredy login");
+      } else {
+        await AsyncStorage.setItem("my", password);
+        await AsyncStorage.setItem("email", email);
+
+        if (email == a && password == b) {
+          Alert.alert(" Login Succesfull");
+          navigation.navigate("MyTasks", { name: "Welcome" });
+        } else {
+          Alert.alert(" Invalid password and Email");
+        }
+      }
+    } catch (e) {
+      console.log(error);
+    }
+  };
   const navigate = () => {
     navigation.navigate("Register");
   };
 
   const handleLoginPress = () => {
-    const postsRef = ref(db, "posts/" + email);
-    get(postsRef)
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          let postData = [];
-          snapshot.forEach((childSnapshot) => {
-            const data = childSnapshot.val();
-            postData.push(data);
-            console.log("Title:", data.titl);
-            console.log("Body:", data.bod);
-            console.log(data.bod);
+    const loggedIn = getData2(email, password);
 
-            if (data.bod == passwords) {
-              navigation.navigate("MyTasks", { name: "Welcome" });
-              Alert.alert("login Sucessfull");
-            } else {
-              Alert.alert("invalid password");
-            }
-          });
-          setHeadings(postData);
-          console.log(headings);
-        } else {
-          console.log("No data found");
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    if (loggedIn) {
+      Alert.alert("Login Sucessfull");
+    }
   };
 
   return (
@@ -249,15 +251,15 @@ const HomeScreenan = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.inputField}
-          value={emails}
+          value={email}
           placeholder={"Email"}
-          onChangeText={(text) => setEmails(text)}
+          onChangeText={(text) => setEmail(text)}
         />
         <TextInput
           style={styles.inputField}
-          value={passwords}
+          value={password}
           placeholder="Password"
-          onChangeText={(text) => setPasswords(text)}
+          onChangeText={(text) => setPassword(text)}
         />
 
         <TouchableOpacity onPress={handleLoginPress}>
@@ -286,18 +288,36 @@ const HomeScreenan = ({ navigation }) => {
 const HomeScreen1 = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [headings, setHeadings] = useState([]);
+  const [texts, setTexts] = useState([]);
+
+  const getData2 = async (email, password) => {
+    console.log(email, password);
+    try {
+      await AsyncStorage.setItem("my", password);
+      await AsyncStorage.setItem("email", email);
+      const value = await AsyncStorage.getItem("my");
+      console.log(value);
+
+      if (value == null) {
+        Alert.alert("alredy login");
+      } else {
+        Alert.alert(" Login Succesfull");
+        navigation.navigate("MyTasks", { name: "Welcome" });
+      }
+    } catch (e) {
+      console.log(error);
+    }
+  };
 
   const handleLoginPress = () => {
     set(ref(db, "posts/" + email), {
       titl: email,
       bod: password,
     });
-    AsyncStorage.setItem("email", email);
-    AsyncStorage.setItem("password", password);
     setEmail("");
     setPassword("");
   };
-
   const handleLoginPress1 = () => {
     const postsRef = ref(db, "posts/" + email);
     get(postsRef)
