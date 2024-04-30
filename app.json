@@ -1,4 +1,23 @@
 {
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview2": {
+      "android": {
+        "gradleCommand": ":app:assembleRelease"
+      }
+    },
+    "preview3": {
+      "developmentClient": true
+    },
+    "preview4": {
+      "distribution": "internal"
+    },
+    "production": {}
+  },
   "expo": {
     "name": "login",
     "slug": "login",
@@ -11,9 +30,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -22,13 +39,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "googleServicesFile": "./google-services.json",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anbarasanm.login"
     },
-
-    
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "12194b09-1cd1-489c-a3c2-b858cab29fbb"
+      }
     }
-  
   }
 }
