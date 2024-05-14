@@ -5,12 +5,11 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./src/screen/LoginScreen";
 import SignupScreen from "./src/screen/SignUpScreen";
 import ProfileScreen from "./src/screen/TodoListScreen";
-
+import CGPACALCULATOR from "./src/screen/CGPACALCULATOR";
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
-
   useEffect(() => {
     const checkSignedIn = async () => {
       try {
@@ -47,6 +46,11 @@ const MyStack = () => {
               component={SignupScreen}
               options={{ headerLeft: null }}
             />
+            <Stack.Screen
+              name="CGPACALCULATOR"
+              component={CGPACALCULATOR}
+              options={{ headerLeft: null }}
+            />
           </>
         ) : (
           <Stack.Screen
@@ -59,5 +63,4 @@ const MyStack = () => {
     </NavigationContainer>
   );
 };
-
 export default MyStack;

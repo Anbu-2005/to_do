@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { TextInput, View, Text, TouchableOpacity } from "react-native";
+import {
+  TextInput,
+  View,
+  Text,
+  TouchableOpacity,
+  ImageBackground,
+  StyleSheet,
+} from "react-native";
 import { db } from "../../config";
 import {
   ref,
@@ -13,11 +20,20 @@ import {
 } from "firebase/database";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const StoreNameAsync = async (value) => {
+  try {
+    await AsyncStorage.setItem("name1", value);
+  } catch (e) {
+    console.log("error");
+  }
+};
+
 const LoginScreen = ({ navigation }) => {
   const [emails, setEmails] = useState("");
   const [passwords, setPasswords] = useState("");
   const [email, setEmail] = useState("");
-  const navigate = () => {
+
+  const navigateToRegister = () => {
     navigation.navigate("Register");
   };
 
@@ -28,6 +44,7 @@ const LoginScreen = ({ navigation }) => {
       console.log("error");
     }
   };
+
   const handleLoginPress = () => {
     const postsRef = ref(db, "posts/" + email);
     get(postsRef)
@@ -36,17 +53,18 @@ const LoginScreen = ({ navigation }) => {
           let found = false;
           snapshot.forEach((childSnapshot) => {
             const data = childSnapshot.val();
-            console.log("Title:", data.titl);
-            console.log("Body:", data.bod);
+            console.log("Title:", data.title);
+            console.log("Body:", data.body);
             console.log(data.bod);
-            const password = data.bod;
-            const email1 = data.titl;
+            const password = data.body;
+            const email1 = data.title;
 
             if (password === passwords && email1 === emails) {
               found = true;
             }
           });
           if (found) {
+            StoreNameAsync(emails);
             alert("Login Successful");
 
             setEmails("");
@@ -65,70 +83,143 @@ const LoginScreen = ({ navigation }) => {
       });
   };
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text
+    <View
+      style={[
+        styles.container,
+
+        {
+          flexDirection: "column",
+        },
+      ]}
+    >
+      <View
         style={{
-          color: "black",
-          fontSize: 20,
-          fontFamily: "sans-serif",
-          fontWeight: "bold",
+          height: "25%",
+          width: "100",
+          backgroundColor: "#130c32",
+          justifyContent: "center",
         }}
       >
-        LOGIN YOUR ACCOUNT
-      </Text>
-      <Text style={{ textAlign: "left", color: "red" }}>Welcome back</Text>
-      <View style={{ width: "86%", alignItems: "center", color: "#ffffff" }}>
-        <TextInput
-          style={{
-            marginVertical: 20,
-            width: "90%",
-            height: 40,
-            borderWidth: 3,
-            borderRadius: 5,
-            paddingHorizontal: 20,
-            color: "#000000",
-          }}
-          value={emails}
-          placeholder={"Username"}
-          onChangeText={(text) => setEmails(text)}
-        />
-        <TextInput
-          style={{
-            marginVertical: 20,
-            width: "90%",
-            height: 40,
-            borderWidth: 3,
-            borderRadius: 5,
-            paddingHorizontal: 20,
-            color: "#000000",
-          }}
-          value={passwords}
-          placeholder="Password"
-          secureTextEntry={true}
-          onChangeText={(text) => setPasswords(text)}
-        />
-        <TouchableOpacity onPress={handleLoginPress}>
-          <View
+        <Text style={styles.title}>Welcome back</Text>
+        <Text style={styles.subtitle}>LOGIN YOUR ACCOUNT</Text>
+      </View>
+      <View style={styles.overlay}>
+        <View style={{ marginBottom: 20 }}>
+          <Text
             style={{
-              backgroundColor: "#1e90ff",
-              width: 250,
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 7,
-              marginBottom: 70,
-              padding: 10,
+              fontSize: 25,
+              fontWeight: "bold",
+              left: "5%",
+              top: "1%",
             }}
           >
-            <Text style={{ color: "white" }}>LOG IN</Text>
-          </View>
-        </TouchableOpacity>
-        <Text style={{ marginTop: 10 }}>Already have an Account?</Text>
-        <TouchableOpacity onPress={navigate}>
-          <Text style={{ color: "#1e90ff", marginTop: 5 }}>Signup</Text>
-        </TouchableOpacity>
+            Sign In
+          </Text>
+        </View>
+        <View style={{ marginBottom: 45 }}>
+          <Text style={{ fontsize: 20, left: "5%", fontWeight: "500" }}>
+            Your Username
+          </Text>
+
+          <TextInput
+            style={styles.input}
+            value={emails}
+            placeholder={"Username"}
+            placeholderTextcolor="#fc2404"
+            onChangeText={(text) => setEmails(text)}
+          />
+          <Text style={{ fontsize: 20, left: "5%", fontWeight: "500" }}>
+            Password
+          </Text>
+          <TextInput
+            style={styles.input}
+            value={passwords}
+            placeholder="Password"
+            secureTextEntry={true}
+            onChangeText={(text) => setPasswords(text)}
+          />
+
+          <TouchableOpacity onPress={handleLoginPress}>
+            <View style={styles.loginButton}>
+              <Text style={styles.loginButtonText}>LOG IN</Text>
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.signupText}>Don't have an account?</Text>
+          <TouchableOpacity onPress={navigateToRegister}>
+            <Text style={styles.signupLink}>Signup</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#130c32",
+  },
+
+  overlay: {
+    backgroundColor: "#ffffff",
+    justifyContent: "center",
+
+    alignSelf: "auto",
+    flex: 1,
+    borderTopStartRadius: 40,
+    borderTopEndRadius: 40,
+  },
+  title: {
+    color: "white",
+    fontSize: 40,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  subtitle: {
+    color: "white",
+    textAlign: "center",
+    fontFamily: "Cochin",
+    fontSize: 15,
+    marginBottom: 5,
+  },
+  input: {
+    backgroundColor: "#cbcddf",
+    marginBottom: 20,
+    borderRadius: 15,
+
+    paddingHorizontal: 20,
+    height: 50,
+    color: "#000",
+    borderColor: "#000000",
+    width: "90%",
+    alignSelf: "center",
+  },
+  loginButton: {
+    backgroundColor: "#130c32",
+
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    padding: 10,
+    width: "90%",
+    alignSelf: "center",
+  },
+  loginButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  signupText: {
+    color: "white",
+    textAlign: "center",
+    marginTop: 10,
+  },
+  signupLink: {
+    color: "#130c32",
+    textAlign: "center",
+    fontSize: "30",
+    fontWeight: "bold",
+  },
+});
 
 export default LoginScreen;
